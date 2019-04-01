@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<!-- 引入 database.properties 文件-->
+	<properties resource="database.properties"/>
+	
+	<!-- 配置mybatis的log实现为LOG4J PARTIAL为resultMap自动映射-->
+	<settings>
+		 <setting name="logImpl" value="LOG4J" /> 
+		       <!-- <setting name="autoMappingBehavior" value="NONE"/> --> <!-- 取消自动匹配,默认PARTIAL为自动匹配所有属性,有内部嵌套(association,collection)的除外 -->
+		        <!-- <setting name="autoMappingBehavior" value="FULL"/> -->  <!--自动匹配所有属性  --> 
+	</settings>
+	
+	
+	<!-- 给实体类配置别名 ,弊端为每多一个实体需要一一添加-->
+	<typeAliases>
+	<!-- <typeAlias alias="user" type="pojo.User"/>
+	<typeAlias alias="provider" type="pojo.provider"/>
+	<typeAlias alias="address" type="pojo.address"/>
+	<typeAlias alias="bill" type="pojo.bill"/>
+	<typeAlias alias="role" type="pojo.role"/> -->
+	<!-- 给实体类写别名的第二种方法 -->
+	<package name="pojo"/>
+	</typeAliases>	
+	
+	<!-- 配置环境 -->
+	<environments default="development">
+		<environment id="development">
+			<!--配置事务管理，采用JDBC的事务管理  -->
+			<transactionManager type="JDBC"></transactionManager>
+			<!-- POOLED:mybatis自带的数据源，JNDI:基于tomcat的数据源 -->
+			<dataSource type="POOLED">
+				<property name="driver" value="${driver}"/>
+				<property name="url" value="${url}"/>
+				<property name="username" value="${user}"/>
+				<property name="password" value="${password}"/>
+			</dataSource>
+		</environment>
+	</environments>
+	
+	<!-- 将mapper文件加入到配置文件中 -->
+	<mappers>
+		<mapper resource="dao/UserMapper.xml"/>
+		<mapper resource="providerdao/ProviderMapper.xml"/>
+		<mapper resource="electronicdao/ElectronicMapper.xml"/>
+		<mapper resource="billdao/BillMapper.xml"/>
+	</mappers>
+
+</configuration>
+
+
+
+

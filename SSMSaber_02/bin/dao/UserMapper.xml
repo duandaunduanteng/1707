@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dao.UserDao">
+	<!-- 查询用户总数 -->
+	<select id="getUserCount" resultType="Integer">
+		select count(*) from smbms_user;
+	</select>
+	
+	<!-- 获取用户所有信息 -->
+	<select id="getUserList" resultType="pojo.User">
+		select * from smbms_user;
+	</select>
+	
+	<!-- 获取用户所有信息 -->
+	<select id="showUserList" resultType="pojo.User">
+		select * from smbms_user;
+	</select>
+	
+	<!-- 添加用户信息 --> 
+	<insert id="add" parameterType="pojo.User">
+		insert into smbms_user(userCode,userName,userPassword,gender,birthday,phone,address,userRole,createdBy,creationDate,modifyBy,modifyDate)
+		values(#{userCode},#{userName},#{userPassword},#{gender},#{birthday},#{phone},#{address},#{userRole},#{createdBy},#{creationDate},#{modifyBy},#{modifyDate})
+	</insert>
+	
+	<!-- 修改用户信息 -->
+	<update id="get" parameterType="User">
+	update smbms_user set userCode=#{userCode} where id=#{id}
+	</update>
+	
+	<!-- 模糊查询 -->
+	<select id="getListBy" resultType="User" parameterType="String" >
+	select *from smbms_user where userName like CONCAT('%',#{userName},'%')	
+	</select> 
+	                                                           
+	<!-- 模糊查询 --> 
+	<select id="getListBuy" resultType="User" parameterType="String">
+	select * from smbms_user where userName like CONCAT('%',#{userName},'%')
+	</select>
+	
+	<!-- 多条件查询 -->
+	<resultMap type="User" id="maplist">
+	<result property="userName" column="userName"/>
+	<result property="address" column="address"/>
+	    <association property="roleName" javaType="Role">
+			<id property="id" column="r_id"/>
+			<result property="roleName" column="roleName"/>
+	   </association>
+	</resultMap>
+	<select id="getListin" resultMap="maplist" parameterType="User">
+	 select u.*, s.id as r_id,s.roleName from smbms_user u ,smbms_role s  where userName like CONCAT('%',#{userName},'%') and address like CONCAT('%',#{address},'%')
+	</select>
+	
+	<!-- 多条件查询MAp -->
+	<select id="getListMap" resultType="User" parameterType="Map">
+	select *from smbms_user where userName like CONCAT('%',#{name},'%') and address like CONCAT('%',#{address},'%')
+	</select>
+	
+	<!-- 删除 -->
+	<delete id="delete" parameterType="Integer">
+	delete from smbms_user where id=#{id}
+	</delete>
+	
+	<!-- 根据角色id查询角色名 第二章示例20-->
+	<resultMap type="User" id="role">
+	<id property="id" column="id"/>
+	<result property="userName" column="userName"/>
+		<!--  用于处理一对一关联关系--><association property="role" javaType="Role">
+			<id property="id" column="r_id"/>
+			<result property="roleCode" column="roleCode"/>
+			<result property="roleName" column="roleName"/>
+		</association>
+	</resultMap>
+	<select id="getuserlistbyrole" resultMap="role" parameterType="Integer">
+	select u.*,r.id as r_id,r.roleName from smbms_user u,smbms_role r 
+	where u.userRole=#{userRole} and u.userRole=r.id
+	</select>
+	  <!-- 根据用户id获取用户信息及地址列表 示例24 -->
+	  <!-- <resultMap type="User" id="userAddress">
+		<id property="id" column="id"/>
+		<result property="userCode" column="userCode"/>
+		<result property="userName" column="userName"/>
+		<collection property="addresslist" ofType="Address">
+			<id property="id" column="a_id"/>
+			<result property="postCode" column="postCode"/>
+			<result property="tel" column="tel"/>
+			<result property="contact" column="contact"/>
+			<result property="addressDesc" column="addressDesc"/>
+		</collection>
+	</resultMap> 
+	<select id="getAddressListByUserId" resultMap="userAddress" parameterType="Integer">
+		select u.*,a.id as a_id,a.contact,a.addressDesc,a.postCode,a.tel
+		from smbms_user u,smbms_address a
+		where u.id=a.userId
+		and u.id=#{id}
+	</select> -->   
+	 
+	<!-- 根据用户id获取用户信息及地址列表 示例26 -->
+	 <resultMap type="User" id="userAddress">
+		<id property="id" column="id"/>
+		<result property="userCode" column="userCode"/> 
+		<result property="userName" column="userName"/>
+		<collection property="addresslist" ofType="Address" resultMap="addressResult"/>
+	</resultMap>
+	<resultMap type="Address" id="addressResult">
+			<id property="id" column="a_id"/>
+			<result property="postCode" column="postCode"/>
+			<result property="tel" column="tel"/>
+			<result property="contact" column="contact"/>
+			<result property="addressDesc" column="addressDesc"/>
+	</resultMap>
+	<select id="getAddressListByUserId" resultMap="userAddress" parameterType="Integer">
+		select u.*,a.id as a_id,a.contact,a.addressDesc,a.postCode,a.tel
+		from smbms_user u left join smbms_address a on u.id=a.userId
+		where u.id=#{id}
+	</select> 
+</mapper>
