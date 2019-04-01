@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 获得供应商的总数量 -->
+<mapper namespace="providerdao.ProviderDao">
+<select id="getProviderCont" resultType="Integer">
+		select count(*) from smbms_provider;
+	</select>
+	<!-- 获取所有供应商的信息 -->
+	<select id="showprovider" resultType="pojo.Provider">
+	select * from smbms_provider;
+	</select>
+	<!-- 上机练习4 -->
+	<resultMap type="Provider" id="getProviderBy">
+	<id property="id" column="id"/>
+	<result property="proCode" column="proCode"/>
+	<result property="proName" column="proName"/>
+	<result property="proContact" column="proContact"/>
+	<result property="proPhone" column="proPhone"/>
+		<collection property="billlist" ofType="Bill">
+			<result property="billCode" column="billCode"/>
+			<result property="productName" column="productName"/>
+			<result property="totalPrice" column="totalPrice"/>
+			<result property="isPayment" column="isPayment"/>
+		</collection>
+	</resultMap>
+<select id="getProviderBy" resultMap="getProviderBy" parameterType="Map">
+SELECT p.id,p.proCode,p.proName,p.proContact,p.proPhone,b.billCode,b.productName,b.totalPrice,b.isPayment  
+FROM smbms_bill b,smbms_provider p
+WHERE  p.id=#{id} AND  b.providerId=p.id
+</select>
+</mapper>
