@@ -3,8 +3,8 @@ package dwww;
 public class BingDiTest {
 
 	public static void main(String[] args) {
-		System.out.println("ÎÒÊÇ±ùµÛ£¡");
-		System.out.println("ÎÒÊÇÎÄÁú");
+		System.out.println("å¼ å¤§å¤§");
+		System.out.println("å¹¶å¤§å¤§");
 	}
 
 }
